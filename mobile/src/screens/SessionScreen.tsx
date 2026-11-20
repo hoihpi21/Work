@@ -8,6 +8,7 @@ import { theme } from '../theme'
 import Avatar from '../components/Avatar'
 import ProgressBar from '../components/ProgressBar'
 import Comment, { type CommentRow } from '../components/Comment'
+import SessionResources, { type ResourceRow } from '../components/SessionResources'
 import { Button, Card, ErrorText, Field, Loading, Notice, styles } from '../components/ui'
 
 export default function SessionScreen({ route, navigation }: any) {
@@ -19,6 +20,7 @@ export default function SessionScreen({ route, navigation }: any) {
   const [chapters, setChapters] = useState<{ position: number; title: string | null }[]>([])
   const [participants, setParticipants] = useState<any[]>([])
   const [comments, setComments] = useState<CommentRow[]>([])
+  const [resources, setResources] = useState<ResourceRow[]>([])
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
   const [body, setBody] = useState('')
@@ -27,7 +29,7 @@ export default function SessionScreen({ route, navigation }: any) {
   const [replyTo, setReplyTo] = useState<CommentRow | null>(null)
   const [hideSpoilers, setHideSpoilers] = useState(true)
   const [posting, setPosting] = useState(false)
-  const [tab, setTab] = useState<'discussion' | 'readers'>('discussion')
+  const [tab, setTab] = useState<'discussion' | 'readers' | 'resources'>('discussion')
   const [limit, setLimit] = useState(50)
   const [hostModal, setHostModal] = useState(false)
   const [editTitle, setEditTitle] = useState('')
@@ -42,7 +44,7 @@ export default function SessionScreen({ route, navigation }: any) {
   const isHost = session?.host_id === uid
 
   const load = useCallback(async () => {
-    const [s, c, p, m] = await Promise.all([
+    const [s, c, p, m, r] = await Promise.all([
       supabase.from('sessions').select('*, host:profiles!sessions_host_id_fkey(display_name)').eq('id', id).maybeSingle(),
       supabase.from('chapters').select('position, title').eq('session_id', id).order('position'),
       supabase
@@ -56,6 +58,11 @@ export default function SessionScreen({ route, navigation }: any) {
         .eq('session_id', id)
         .order('created_at', { ascending: false })
         .limit(limit),
+      supabase
+        .from('session_resources')
+        .select('id, kind, title, url, storage_path, file_name, mime_type, file_size, created_at, uploader_id, uploader:profiles!session_resources_uploader_id_fkey(display_name)')
+        .eq('session_id', id)
+        .order('created_at', { ascending: false }),
     ])
     const err = s.error || c.error || p.error || m.error
     if (err) setError(err.message)
@@ -65,6 +72,7 @@ export default function SessionScreen({ route, navigation }: any) {
       setChapters(c.data)
       setParticipants(p.data)
       setComments([...(m.data as any[])].reverse())
+      if (!r.error && r.data) setResources(r.data as any)
     }
     setLoading(false)
   }, [id, limit, t])
@@ -79,6 +87,7 @@ export default function SessionScreen({ route, navigation }: any) {
       .channel(`session-${id}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'comments', filter: `session_id=eq.${id}` }, refresh)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'participants', filter: `session_id=eq.${id}` }, refresh)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'session_resources', filter: `session_id=eq.${id}` }, refresh)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'reactions' }, refresh)
       .subscribe()
     return () => {
@@ -319,7 +328,7 @@ export default function SessionScreen({ route, navigation }: any) {
       )}
 
       <View style={{ flexDirection: 'row', marginBottom: 12, backgroundColor: '#efe6da', borderRadius: 10, padding: 3 }} accessibilityRole="tablist">
-        {(['discussion', 'readers'] as const).map((tb) => (
+        {(['discussion', 'readers', 'resources'] as const).map((tb) => (
           <Pressable
             key={tb}
             accessibilityRole="tab"
@@ -327,12 +336,27 @@ export default function SessionScreen({ route, navigation }: any) {
             onPress={() => setTab(tb)}
             style={{ flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: 'center', backgroundColor: tab === tb ? '#fff' : 'transparent' }}
           >
-            <Text style={{ fontWeight: '600', color: tab === tb ? theme.accent : theme.muted }}>
-              {tb === 'discussion' ? t('session.tabDiscussion') : t('session.tabProgress')}
+            <Text style={{ fontWeight: '600', fontSize: 13, color: tab === tb ? theme.accent : theme.muted }}>
+              {tb === 'discussion'
+                ? t('session.tabDiscussion')
+                : tb === 'readers'
+                  ? t('session.tabProgress')
+                  : `${t('resources.tabResources')}${resources.length ? ` (${resources.length})` : ''}`}
             </Text>
           </Pressable>
         ))}
       </View>
+
+      {tab === 'resources' && (
+        <SessionResources
+          sessionId={id}
+          resources={resources}
+          canUpload={!!me}
+          isHost={isHost}
+          onChanged={load}
+          onError={setError}
+        />
+      )}
 
       {tab === 'discussion' && me && (
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>

@@ -109,6 +109,9 @@
     "private": "Private (invite only)",
     "privateDesc": "Only people with the invite link or code can join",
     "requiredError": "Title and author are required.",
+    "attachmentsTitle": "Files & links (optional)",
+    "attachmentsHint": "Attach PDF, DOC, DOCX, XML files or web URLs now, or add them later inside the session.",
+    "uploadingFiles": "Uploading files…",
     "creating": "Creating…",
     "submit": "Create session"
   },
@@ -186,6 +189,28 @@
     "joining": "Joining reading session…",
     "failed": "Could not join session",
     "backHome": "Back to sessions"
+  },
+  "resources": {
+    "title": "Files & links",
+    "tabResources": "Files & links",
+    "uploadFile": "Upload file",
+    "uploading": "Uploading…",
+    "addUrl": "Add URL",
+    "urlLabel": "Link URL",
+    "urlPlaceholder": "https://example.com/book-or-article",
+    "titleLabel": "Title (optional)",
+    "titlePlaceholder": "e.g. Study guide or full PDF",
+    "add": "Add link",
+    "empty": "No files or links attached yet.",
+    "supportedTypes": "PDF, DOC, DOCX, XML (max 25 MB) or any web URL.",
+    "invalidType": "Unsupported file type. Please upload PDF, DOC, DOCX, or XML.",
+    "tooLarge": "File is too large (max 25 MB).",
+    "invalidUrl": "Please enter a valid http:// or https:// URL.",
+    "preview": "Preview",
+    "open": "Open",
+    "download": "Download",
+    "deleteConfirm": "Remove this file or link?",
+    "addedBy": "Added by {name} · {time}"
   },
   "profile": {
     "title": "Your profile",

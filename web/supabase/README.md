@@ -9,6 +9,7 @@ Project: `https://your-project.supabase.co`
 4. `supabase/migrations/0004_private_sessions.sql` – v2.0 private sessions, invite codes (`join_by_invite`, `regenerate_invite_code`), tightened RLS
 5. `supabase/migrations/0005_spoilers_search_host_controls.sql` – v2.0 spoiler `chapter_ref`, quote-reply `reply_to_id`, trigram search indexes, host controls (`update_session`, `delete_session`, `remove_participant`, host comment moderation)
 6. `supabase/migrations/0006_notifications.sql` – v2.0 `notifications` & `push_tokens` tables, per-session `muted` flag, realtime publication, notification triggers
+7. `supabase/migrations/0007_session_resources.sql` – v2.0 `session_resources` table & private `session-files` bucket (PDF, DOC/DOCX, XML up to 25 MB, plus URLs)
 
 Dashboard > SQL Editor > New query > paste file > Run. Each file runs once; if one fails, fix it before running the next.
 

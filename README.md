@@ -16,7 +16,8 @@ Full product and technical specification: [`web/books-and-friends-spec.md`](web/
 - **Host Controls:** Edit book title, author, visibility, and chapter names; regenerate private invite links; remove participants; moderate comments; or delete a session.
 - **In-App Notifications & Mute:** Realtime notification bell (Web) and Notifications screen (Mobile) for comments, replies, and reactions, plus per-session mute/unmute.
 - **Dual-Language Support (Web & Mobile):** English (`en`) and Burmese (`my` / မြန်မာ) with externalized locale files and persistent language switching on both Web and Mobile.
-- **Mobile Extras:** Deep linking (`booksandfriends://session/:id`, `booksandfriends://invite/:code`, `booksandfriends://reset`), native share sheet, and native photo picker/cropper.
+- **Files & Links (PDF, DOC/DOCX, XML, URL):** Upload reading materials (up to 25 MB) into a private Supabase Storage bucket (`session-files`) or attach external URLs per session, with signed-URL downloads, inline PDF/XML preview on Web, and native document picking on Mobile.
+- **Mobile Extras:** Deep linking (`booksandfriends://session/:id`, `booksandfriends://invite/:code`, `booksandfriends://reset`), native share sheet, native document picker, and native photo picker/cropper.
 
 ---
 
