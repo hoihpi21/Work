@@ -6,6 +6,7 @@ import { supabase } from '../supabase'
 import Avatar from '../components/Avatar'
 import ProgressBar from '../components/ProgressBar'
 import Comment from '../components/Comment'
+import SessionResources from '../components/SessionResources'
 
 export default function SessionDetail() {
   const { id } = useParams()
@@ -16,6 +17,7 @@ export default function SessionDetail() {
   const [chapters, setChapters] = useState([])
   const [participants, setParticipants] = useState([])
   const [comments, setComments] = useState([])
+  const [resources, setResources] = useState([])
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [loading, setLoading] = useState(true)
@@ -39,7 +41,7 @@ export default function SessionDetail() {
   const isHost = session?.host_id === user.id
 
   const load = useCallback(async () => {
-    const [s, c, p, m] = await Promise.all([
+    const [s, c, p, m, r] = await Promise.all([
       supabase.from('sessions').select('*, host:profiles!sessions_host_id_fkey(display_name)').eq('id', id).maybeSingle(),
       supabase.from('chapters').select('position, title').eq('session_id', id).order('position'),
       supabase
@@ -53,6 +55,11 @@ export default function SessionDetail() {
         .eq('session_id', id)
         .order('created_at', { ascending: false })
         .limit(limit),
+      supabase
+        .from('session_resources')
+        .select('id, kind, title, url, storage_path, file_name, mime_type, file_size, created_at, uploader_id, uploader:profiles!session_resources_uploader_id_fkey(display_name)')
+        .eq('session_id', id)
+        .order('created_at', { ascending: false }),
     ])
     const err = s.error || c.error || p.error || m.error
     if (err) setError(err.message)
@@ -62,6 +69,7 @@ export default function SessionDetail() {
       setChapters(c.data)
       setParticipants(p.data)
       setComments([...m.data].reverse())
+      if (!r.error && r.data) setResources(r.data)
     }
     setLoading(false)
   }, [id, limit, t])
@@ -76,6 +84,7 @@ export default function SessionDetail() {
       .channel(`session-${id}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'comments', filter: `session_id=eq.${id}` }, refresh)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'participants', filter: `session_id=eq.${id}` }, refresh)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'session_resources', filter: `session_id=eq.${id}` }, refresh)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'reactions' }, refresh)
       .subscribe()
     return () => {
@@ -415,6 +424,14 @@ export default function SessionDetail() {
               ))}
             </ul>
           </div>
+          <SessionResources
+            sessionId={id}
+            resources={resources}
+            canUpload={!!me}
+            isHost={isHost}
+            onChanged={load}
+            onError={setError}
+          />
         </aside>
 
         <section className={`thread ${tab === 'discussion' ? '' : 'hide-mobile'}`}>

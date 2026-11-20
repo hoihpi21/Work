@@ -18,6 +18,12 @@ web-build/
 
 # Workspace-local / non-project folders
 .venv/
+**/.venv/
+**/storage/
+**/__pycache__/
+**/.pytest_cache/
+*.py[cod]
+*.db
 9router_out/
 mobile/.claude/
 

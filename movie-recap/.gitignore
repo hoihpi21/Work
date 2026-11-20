@@ -1,0 +1,37 @@
+# Environment & API secrets (NEVER commit .env)
+.env
+.env.local
+.env.*.local
+**/.env
+
+# Python virtual environments & caches
+.venv/
+**/.venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+**/.pytest_cache/
+
+# Runtime storage (downloaded videos, rendered MP4/MP3, SQLite DB, ffmpeg binary)
+storage/
+**/storage/
+*.db
+*.sqlite3
+
+# Node / Web / Mobile dependencies & build outputs
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.expo/
+**/.expo/
+web-build/
+*.tsbuildinfo
+
+# Logs & OS files
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
