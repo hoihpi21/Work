@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "CineRecap MM",
+    "slug": "cinerecap-mm",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "cinerecapmm",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0b0e14"
+      }
+    }
+  }
+}
