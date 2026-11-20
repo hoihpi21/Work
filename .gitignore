@@ -1,0 +1,33 @@
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.jks
+*.p8
+*.p12
+*.mobileprovision
+
+# Dependencies & build outputs
+node_modules/
+dist/
+web-build/
+.expo/
+*.tsbuildinfo
+
+# Workspace-local / non-project folders
+.venv/
+9router_out/
+mobile/.claude/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS & editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
