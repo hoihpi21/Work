@@ -3,6 +3,7 @@ import { useAuth } from '../auth'
 import { useI18n } from '../i18n'
 import Avatar from './Avatar'
 import LanguageSwitcher from './LanguageSwitcher'
+import NotificationBell from './NotificationBell'
 
 export default function Layout({ children }) {
   const { profile, signOut } = useAuth()
@@ -18,6 +19,7 @@ export default function Layout({ children }) {
           <nav className="nav">
             <NavLink to="/" end>{t('nav.sessions')}</NavLink>
             <Link to="/new" className="btn btn-primary btn-sm">+ <span className="hide-xs">{t('nav.newSession')}</span></Link>
+            <NotificationBell />
             <LanguageSwitcher />
             <NavLink to="/profile" className="nav-profile" aria-label={t('nav.profile')}>
               <Avatar name={profile?.display_name} url={profile?.avatar_url} size={32} />

@@ -6,16 +6,17 @@ Full product and technical specification: [`web/books-and-friends-spec.md`](web/
 
 ---
 
-## Features (v1.0)
+## Features (v2.0)
 
 - **Authentication & Profiles:** Email + password sign-up, login, logout, password reset, editable display name (2–40 chars), square-cropped profile avatar upload/removal, and self-service account deletion (comments remain as `"Deleted user"`).
-- **Reading Sessions:** Create public sessions with book title, author, and 1–200 chapters (auto-numbered or custom-named). Browse sessions in **Discover** (all, newest first, paginated) and **Mine** (joined/hosted).
-- **Progress Tracking:** Join or leave any session, mark completed chapters (`0…N`), view your own progress bar prominently, and see every participant's progress bar.
-- **Realtime Discussion & Reactions:** Single flat chronological thread per session (comments up to 2,000 chars), edit/delete own comments, live updates via Supabase Realtime, and multiple emoji reactions per member per comment.
-- **Dual-Language Support (Web):** English (`en`) and Burmese (`my` / မြန်မာ) with externalized locale files and persistent language switching.
-- **Mobile Extras:** Deep linking (`booksandfriends://session/:id`, `booksandfriends://reset`), native share sheet, and native photo picker/cropper.
-
-> **Out of scope in v1.0:** Private sessions / invite links, notifications, search, threaded replies, spoiler protection, moderation/host controls, book catalog API, direct messages, and admin dashboard.
+- **Public & Private Reading Sessions:** Create public or invite-only private sessions with book title, author, and 1–200 chapters (auto-numbered or custom-named). Join private sessions via invite link (`/invite/:code` or `booksandfriends://invite/:code`) or invite code entry on Home.
+- **Search & Filters:** Search sessions by book title or author across **Discover** and **Mine**, with filter chips (`All`, `In progress`, `Finished`, `Private`).
+- **Progress Tracking & Spoiler Protection:** Join or leave sessions, mark completed chapters (`0…N`), view everyone's progress bar, tag comments with a chapter number, and automatically hide spoilers ahead of your current reading progress with one-tap reveal.
+- **Realtime Discussion, Quote-Replies & Reactions:** Chronological thread per session with quote-replies, edit/delete own comments, live updates via Supabase Realtime, and multiple emoji reactions per member per comment.
+- **Host Controls:** Edit book title, author, visibility, and chapter names; regenerate private invite links; remove participants; moderate comments; or delete a session.
+- **In-App Notifications & Mute:** Realtime notification bell (Web) and Notifications screen (Mobile) for comments, replies, and reactions, plus per-session mute/unmute.
+- **Dual-Language Support (Web & Mobile):** English (`en`) and Burmese (`my` / မြန်မာ) with externalized locale files and persistent language switching on both Web and Mobile.
+- **Mobile Extras:** Deep linking (`booksandfriends://session/:id`, `booksandfriends://invite/:code`, `booksandfriends://reset`), native share sheet, and native photo picker/cropper.
 
 ---
 
