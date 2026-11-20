@@ -9,6 +9,7 @@ export default function CreateSession() {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [count, setCount] = useState(10)
+  const [visibility, setVisibility] = useState('public')
   const [named, setNamed] = useState(false)
   const [titles, setTitles] = useState([])
   const [error, setError] = useState('')
@@ -25,6 +26,7 @@ export default function CreateSession() {
       p_title: title,
       p_author: author,
       p_chapters: chapters,
+      p_visibility: visibility,
     })
     if (error) {
       setError(error.message)
@@ -49,6 +51,31 @@ export default function CreateSession() {
           {t('createSession.chapterCount')}
           <input type="number" required min={1} max={200} value={count} onChange={(e) => setCount(e.target.value)} />
         </label>
+        <div className="field-group">
+          <span className="field-label">{t('createSession.visibility')}</span>
+          <div className="vis-grid" role="radiogroup" aria-label={t('createSession.visibility')}>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={visibility === 'public'}
+              className={`vis-option ${visibility === 'public' ? 'active' : ''}`}
+              onClick={() => setVisibility('public')}
+            >
+              <strong>🌐 {t('createSession.public')}</strong>
+              <span className="muted small">{t('createSession.publicDesc')}</span>
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={visibility === 'private'}
+              className={`vis-option ${visibility === 'private' ? 'active' : ''}`}
+              onClick={() => setVisibility('private')}
+            >
+              <strong>🔒 {t('createSession.private')}</strong>
+              <span className="muted small">{t('createSession.privateDesc')}</span>
+            </button>
+          </div>
+        </div>
         <label className="check">
           <input type="checkbox" checked={named} onChange={(e) => setNamed(e.target.checked)} />
           {t('createSession.nameChapters')}

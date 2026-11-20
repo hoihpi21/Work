@@ -3,6 +3,7 @@ import { Alert, ScrollView, Text, View } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { supabase } from '../supabase'
 import { useAuth } from '../auth'
+import { LanguageSwitcher, useI18n } from '../i18n'
 import { theme } from '../theme'
 import { resizeAvatar } from '../utils'
 import Avatar from '../components/Avatar'
@@ -10,6 +11,7 @@ import { Button, Card, ErrorText, Field, Notice, styles } from '../components/ui
 
 export default function ProfileScreen() {
   const { user, profile, refreshProfile, signOut } = useAuth()
+  const { t } = useI18n()
   const uid = user!.id
   const [name, setName] = useState('')
   const [msg, setMsg] = useState('')
@@ -24,14 +26,14 @@ export default function ProfileScreen() {
 
   async function save() {
     const n = name.trim()
-    if (n.length < 2 || n.length > 40) return setError('Display name must be 2–40 characters.')
+    if (n.length < 2 || n.length > 40) return setError(t('auth.displayNameLengthError'))
     setBusy(true)
     setMsg('')
     setError('')
     const { error } = await supabase.from('profiles').update({ display_name: n }).eq('id', uid)
     if (error) setError(error.message)
     else {
-      setMsg('Saved!')
+      setMsg(t('profile.saved'))
       refreshProfile()
     }
     setBusy(false)
@@ -44,10 +46,10 @@ export default function ProfileScreen() {
 
   async function pickPhoto() {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync()
-    if (!perm.granted) return setError('Photo library permission is required to choose an avatar.')
+    if (!perm.granted) return setError(t('profile.photoPermissionError'))
     const res = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
-      allowsEditing: true, // native square crop UI
+      allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
     })
@@ -65,10 +67,10 @@ export default function ProfileScreen() {
       const { data } = supabase.storage.from('avatars').getPublicUrl(path)
       const { error } = await supabase.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', uid)
       if (error) throw error
-      setMsg('Photo updated!')
+      setMsg(t('profile.photoUpdated'))
       refreshProfile()
     } catch (err: any) {
-      setError(err.message || 'Upload failed.')
+      setError(err.message || t('profile.uploadFailed'))
     }
     setUploading(false)
   }
@@ -95,9 +97,9 @@ export default function ProfileScreen() {
   }
 
   function confirmDelete() {
-    Alert.alert('Delete account?', 'This cannot be undone.', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: deleteAccount },
+    Alert.alert(t('profile.deleteDialogTitle'), t('profile.deleteDialogDesc'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('comment.delete'), style: 'destructive', onPress: deleteAccount },
     ])
   }
 
@@ -110,26 +112,33 @@ export default function ProfileScreen() {
             <Text style={{ fontWeight: '700', fontSize: 17, color: theme.text }}>{profile?.display_name}</Text>
             <Text style={styles.muted}>{user!.email}</Text>
             <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
-              <Button small disabled={uploading} title={uploading ? 'Working…' : profile?.avatar_url ? 'Change photo' : 'Upload photo'} onPress={pickPhoto} />
-              {profile?.avatar_url && <Button small variant="ghost" disabled={uploading} title="Remove" onPress={removeAvatar} />}
+              <Button
+                small
+                disabled={uploading}
+                title={uploading ? t('profile.working') : profile?.avatar_url ? t('profile.changePhoto') : t('profile.uploadPhoto')}
+                onPress={pickPhoto}
+              />
+              {profile?.avatar_url && <Button small variant="ghost" disabled={uploading} title={t('profile.removePhoto')} onPress={removeAvatar} />}
             </View>
           </View>
         </View>
-        <Field label="Display name" maxLength={40} value={name} onChangeText={setName} />
+        <Field label={t('auth.displayName')} maxLength={40} value={name} onChangeText={setName} />
+        <View style={{ marginBottom: 12 }}>
+          <Text style={{ fontSize: 13, fontWeight: '600', color: theme.text, marginBottom: 6 }}>{t('profile.language')}</Text>
+          <LanguageSwitcher />
+        </View>
         <ErrorText>{error}</ErrorText>
         <Notice>{msg}</Notice>
-        <Button variant="primary" title={busy ? 'Saving…' : 'Save changes'} disabled={busy} onPress={save} />
+        <Button variant="primary" title={busy ? t('common.saving') : t('profile.saveChanges')} disabled={busy} onPress={save} />
       </Card>
 
-      <Button title="Log out" onPress={() => signOut()} style={{ marginBottom: 16 }} />
+      <Button title={t('nav.logout')} onPress={() => signOut()} style={{ marginBottom: 16 }} />
 
       <Card>
-        <Text style={[styles.h3, { color: theme.danger }]}>Delete account</Text>
-        <Text style={[styles.small, { marginBottom: 10 }]}>
-          This removes your profile, progress and reactions. Your comments stay and show as “Deleted user”. This cannot be undone.
-        </Text>
-        <Field label="Type DELETE to confirm" autoCapitalize="characters" value={confirmText} onChangeText={setConfirmText} />
-        <Button variant="danger" title="Delete my account" disabled={confirmText !== 'DELETE' || busy} onPress={confirmDelete} />
+        <Text style={[styles.h3, { color: theme.danger }]}>{t('profile.deleteAccountTitle')}</Text>
+        <Text style={[styles.small, { marginBottom: 10 }]}>{t('profile.deleteAccountDesc')}</Text>
+        <Field label={`${t('profile.deleteConfirmBefore')}DELETE${t('profile.deleteConfirmAfter')}`} autoCapitalize="characters" value={confirmText} onChangeText={setConfirmText} />
+        <Button variant="danger" title={t('profile.deleteAccountBtn')} disabled={confirmText !== 'DELETE' || busy} onPress={confirmDelete} />
       </Card>
     </ScrollView>
   )

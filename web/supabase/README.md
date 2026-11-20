@@ -5,6 +5,10 @@ Project: `https://your-project.supabase.co`
 ## 1. Run migrations (SQL Editor, in order)
 1. `supabase/migrations/0001_init.sql` – tables, RLS, `create_session` RPC, realtime
 2. `supabase/migrations/0002_avatars_and_account_deletion.sql` – avatar bucket + policies, `delete_my_account` RPC, keeps comments after account deletion
+3. `supabase/migrations/0003_grants.sql` – table/sequence/function grants for `authenticated`
+4. `supabase/migrations/0004_private_sessions.sql` – v2.0 private sessions, invite codes (`join_by_invite`, `regenerate_invite_code`), tightened RLS
+5. `supabase/migrations/0005_spoilers_search_host_controls.sql` – v2.0 spoiler `chapter_ref`, quote-reply `reply_to_id`, trigram search indexes, host controls (`update_session`, `delete_session`, `remove_participant`, host comment moderation)
+6. `supabase/migrations/0006_notifications.sql` – v2.0 `notifications` & `push_tokens` tables, per-session `muted` flag, realtime publication, notification triggers
 
 Dashboard > SQL Editor > New query > paste file > Run. Each file runs once; if one fails, fix it before running the next.
 

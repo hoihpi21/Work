@@ -1,5 +1,6 @@
 import { Platform } from 'react-native'
 import * as ImageManipulator from 'expo-image-manipulator'
+import type { TFunc } from './i18n'
 
 const COLORS = ['#c2552d', '#3f7d6b', '#7a5aa6', '#b8860b', '#2f6f9f', '#a8456b', '#5d7a2e']
 
@@ -9,23 +10,24 @@ export function colorFor(str = '') {
   return COLORS[h % COLORS.length]
 }
 
-export function timeAgo(iso: string) {
-  const diff = (new Date(iso).getTime() - Date.now()) / 1000
-  const steps: [Intl.RelativeTimeFormatUnit, number][] = [
-    ['year', 31536000],
-    ['month', 2592000],
-    ['day', 86400],
-    ['hour', 3600],
-    ['minute', 60],
+export function timeAgo(iso: string, t?: TFunc) {
+  const diff = (Date.now() - new Date(iso).getTime()) / 1000
+  const steps: [string, string, number][] = [
+    ['yearAgo', 'yearsAgo', 31536000],
+    ['monthAgo', 'monthsAgo', 2592000],
+    ['dayAgo', 'daysAgo', 86400],
+    ['hourAgo', 'hoursAgo', 3600],
+    ['minuteAgo', 'minutesAgo', 60],
   ]
-  for (const [unit, secs] of steps) {
-    if (Math.abs(diff) >= secs) {
+  for (const [one, many, secs] of steps) {
+    if (diff >= secs) {
       const n = Math.round(diff / secs)
-      const abs = Math.abs(n)
-      return n < 0 ? `${abs} ${unit}${abs > 1 ? 's' : ''} ago` : `in ${abs} ${unit}${abs > 1 ? 's' : ''}`
+      if (t) return t(`time.${n === 1 ? one : many}`, { n })
+      const unit = one.replace('Ago', '')
+      return `${n} ${unit}${n > 1 ? 's' : ''} ago`
     }
   }
-  return 'just now'
+  return t ? t('time.justNow') : 'just now'
 }
 
 /** Downscale a (already square-cropped) picked image to 256px. WebP on Android, JPEG on iOS (no WebP encoder). */
